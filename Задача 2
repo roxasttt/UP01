@@ -1,0 +1,136 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+class Circle {
+    private double x; // Координата центра окружности по оси X
+    private double y; // Координата центра окружности по оси Y
+    private double radius; // Радиус окружности
+
+    public Circle(double x, double y, double radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    // Метод для вычисления площади окружности
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+
+    // Метод для вычисления периметра окружности
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Окружность[центр=(%.2f, %.2f), радиус=%.2f]", x, y, radius);
+    }
+}
+
+public class CircleMain {
+    public static void main(String[] args) {
+        // Создаем массив окружностей
+        List<Circle> circles = new ArrayList<>();
+        circles.add(new Circle(0, 0, 5));
+        circles.add(new Circle(0, 1, 3));
+        circles.add(new Circle(1, 1, 4));
+        circles.add(new Circle(2, 2, 2));
+        circles.add(new Circle(0, -1, 6));
+        
+        // Находим окружности с наибольшей и наименьшей площадью
+        Circle largestAreaCircle = findCircleWithLargestArea(circles);
+        Circle smallestAreaCircle = findCircleWithSmallestArea(circles);
+
+        System.out.println("Окружность с наибольшей площадью: " + largestAreaCircle);
+        System.out.println("Окружность с наименьшей площадью: " + smallestAreaCircle);
+
+        // Находим окружности с наибольшим и наименьшим периметром
+        Circle largestPerimeterCircle = findCircleWithLargestPerimeter(circles);
+        Circle smallestPerimeterCircle = findCircleWithSmallestPerimeter(circles);
+
+        System.out.println("Окружность с наибольшим периметром: " + largestPerimeterCircle);
+        System.out.println("Окружность с наименьшим периметром: " + smallestPerimeterCircle);
+
+        // Находим группы окружностей, центры которых лежат на одной прямой
+        findCirclesOnSameLine(circles);
+    }
+
+    // Метод для нахождения окружности с наибольшей площадью
+    public static Circle findCircleWithLargestArea(List<Circle> circles) {
+        return circles.stream()
+                .max(Comparator.comparingDouble(Circle::getArea))
+                .orElse(null);
+    }
+
+    // Метод для нахождения окружности с наименьшей площадью
+    public static Circle findCircleWithSmallestArea(List<Circle> circles) {
+        return circles.stream()
+                .min(Comparator.comparingDouble(Circle::getArea))
+                .orElse(null);
+    }
+
+    // Метод для нахождения окружности с наибольшим периметром
+    public static Circle findCircleWithLargestPerimeter(List<Circle> circles) {
+        return circles.stream()
+                .max(Comparator.comparingDouble(Circle::getPerimeter))
+                .orElse(null);
+    }
+
+    // Метод для нахождения окружности с наименьшим периметром
+    public static Circle findCircleWithSmallestPerimeter(List<Circle> circles) {
+        return circles.stream()
+                .min(Comparator.comparingDouble(Circle::getPerimeter))
+                .orElse(null);
+    }
+
+    // Метод для поиска окружностей, центры которых лежат на одной прямой
+    public static void findCirclesOnSameLine(List<Circle> circles) {
+        System.out.println("\nГруппы окружностей, центры которых лежат на одной прямой:");
+
+        // Проверяем по оси X
+        for (int i = 0; i < circles.size(); i++) {
+            List<Circle> group = new ArrayList<>();
+            group.add(circles.get(i));
+
+            for (int j = i + 1; j < circles.size(); j++) {
+                if (circles.get(i).getX() == circles.get(j).getX()) {
+                    group.add(circles.get(j));
+                }
+            }
+
+            if (group.size() > 1) {
+                System.out.println("Окружности с одинаковой X-координатой: " + group);
+            }
+        }
+
+        // Проверяем по оси Y
+        for (int i = 0; i < circles.size(); i++) {
+            List<Circle> group = new ArrayList<>();
+            group.add(circles.get(i));
+
+            for (int j = i + 1; j < circles.size(); j++) {
+                if (circles.get(i).getY() == circles.get(j).getY()) {
+                    group.add(circles.get(j));
+                }
+            }
+
+            if (group.size() > 1) {
+                System.out.println("Окружности с одинаковой Y-координатой: " + group);
+            }
+        }
+    }
+}
