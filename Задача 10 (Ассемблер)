@@ -1,0 +1,151 @@
+Задание 1
+N DQ ? ; число без знака
+Не используя арифметические команды, реализовать оператор 
+(1 вариант) N := N * 2
+(2 вариант) N := N div 2
+Код:
+section .data
+    N dd 5
+    result1 db 'Result (N * 2): ', 0
+    result2 db 'Result (N / 2): ', 0
+    newline db 10, 0
+
+section .bss
+    buf resb 10
+
+section .text
+    global _start
+
+_start:
+    mov eax, [N]
+    shl eax, 1
+    mov [N], eax
+
+    mov edi, buf
+    call int_to_string
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, result1
+    mov edx, 17
+    syscall
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, buf
+    mov edx, 10
+    syscall
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, newline
+    mov edx, 1
+    syscall
+
+    mov eax, [N]
+    shr eax, 1
+    mov [N], eax
+
+    mov edi, buf
+    call int_to_string
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, result2
+    mov edx, 17
+    syscall
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, buf
+    mov edx, 10
+    syscall
+
+    mov eax, 1
+    mov edi, 1
+    mov rsi, newline
+    mov edx, 1
+    syscall
+
+    mov eax, 60
+    xor edi, edi
+    syscall
+
+int_to_string:
+    mov ecx, 10
+    xor ebx, ebx
+
+convert_loop:
+    xor edx, edx
+    div ecx
+    add dl, '0'
+    mov [edi], dl
+    inc edi
+    test eax, eax
+    jnz convert_loop
+
+    ret
+
+Задание 2
+1 вариант: Реализовать процедуру Padd(x, а), которая реализует оператор х:=x+а. Передача параметров в стеке, стандартные соглашения о связях.
+Код:
+section .data
+    msg db "Result: ", 0
+    res db "00", 0
+
+section .text
+    global _start
+
+_start:
+    mov rdi, 3
+    mov rsi, 4
+    push rdi
+    push rsi
+    call Padd
+    pop rdi
+    add rsp, 8
+
+    mov rax, rdi
+    mov rdi, res
+    call int_to_str
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, 8
+    syscall
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, res
+    mov rdx, 2
+    syscall
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+Padd:
+    push rbp
+    mov rbp, rsp
+    mov rax, [rbp+16]
+    add rax, [rbp+24]
+    mov [rbp+16], rax
+    pop rbp
+    ret
+
+int_to_str:
+    mov rcx, 10
+    mov rbx, rdi
+    add rbx, 1
+
+convert_loop:
+    xor rdx, rdx
+    div rcx
+    add dl, '0'
+    mov [rbx], dl
+    dec rbx
+    test rax, rax
+    jnz convert_loop
+
+    ret
