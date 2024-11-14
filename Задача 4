@@ -1,0 +1,97 @@
+package test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Внешний класс Payment
+public class Payment {
+    // Внутренний класс Item (Товар)
+    public class Item {
+        private String name;  // Название товара
+        private double price; // Цена товара
+        private int quantity; // Количество товара
+
+        public Item(String name, double price, int quantity) {
+            this.name = name;
+            this.price = price;
+            this.quantity = quantity;
+        }
+
+        // Метод для получения полной стоимости товара (цена * количество)
+        public double getTotalPrice() {
+            return price * quantity;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s: %d шт., %.2f руб./шт., Итого: %.2f руб.", name, quantity, price, getTotalPrice());
+        }
+    }
+
+    // Список товаров в покупке
+    private List<Item> items = new ArrayList<>();
+
+    // Метод для добавления товара в покупку
+    public void addItem(String name, double price, int quantity) {
+        Item item = new Item(name, price, quantity);
+        items.add(item);
+    }
+
+    // Метод для вывода всех товаров
+    public void showItems() {
+        if (items.isEmpty()) {
+            System.out.println("Покупка пуста.");
+        } else {
+            System.out.println("Товары в вашей покупке:");
+            for (Item item : items) {
+                System.out.println(item);
+            }
+        }
+    }
+
+    // Метод для расчета общей стоимости покупки
+    public double getTotalPayment() {
+        double total = 0;
+        for (Item item : items) {
+            total += item.getTotalPrice();
+        }
+        return total;
+    }
+
+    // Основной метод для демонстрации работы
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Payment payment = new Payment();
+        String response;
+
+        // Ввод товаров
+        do {
+            System.out.print("Введите название товара: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Введите цену товара: ");
+            double price = scanner.nextDouble();
+
+            System.out.print("Введите количество товара: ");
+            int quantity = scanner.nextInt();
+
+            // Добавляем товар в список покупок
+            payment.addItem(name, price, quantity);
+
+            System.out.print("Хотите добавить еще один товар? (да/нет): ");
+            scanner.nextLine(); // Для того, чтобы корректно обработать переход на новую строку
+            response = scanner.nextLine();
+
+        } while (response.equalsIgnoreCase("да"));
+
+        // Выводим список товаров
+        payment.showItems();
+
+        // Выводим общую стоимость покупки
+        System.out.printf("Общая стоимость покупки: %.2f руб.%n", payment.getTotalPayment());
+
+        scanner.close();
+    }
+}
+
