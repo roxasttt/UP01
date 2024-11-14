@@ -1,0 +1,160 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class MatematikoGameGUI extends JFrame {
+    private static final int GRID_SIZE = 5;
+    private static final int NUM_CARDS = 52;
+    private static final int MAX_CARD_VALUE = 13;
+
+    private ArrayList<Integer> deck = new ArrayList<>();
+    private JButton[][] cells = new JButton[GRID_SIZE][GRID_SIZE];
+    private int turn = 0;
+    private int currentCard = 0;
+
+    public MatematikoGameGUI() {
+        setTitle("Игра Математико");
+        setSize(600, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        initializeDeck();
+        setupGrid();
+
+        JButton drawButton = new JButton("Вытянуть карту");
+        drawButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!deck.isEmpty()) {
+                    currentCard = drawCard();
+                    JOptionPane.showMessageDialog(null, "Вытянутая карта: " + currentCard);
+
+                    if (turn % 2 == 0) {
+                        enablePlayerMove();
+                    } else {
+                        computerMove();
+                    }
+                    turn++;
+                } else {
+                    int score = calculateScore();
+                    JOptionPane.showMessageDialog(null, "Игра завершена! Ваши очки: " + score);
+                }
+            }
+        });
+
+        add(drawButton, BorderLayout.SOUTH);
+    }
+
+    private void initializeDeck() {
+        for (int i = 1; i <= MAX_CARD_VALUE; i++) {
+            for (int j = 0; j < 4; j++) {
+                deck.add(i);
+            }
+        }
+        Collections.shuffle(deck);
+    }
+
+    private void setupGrid() {
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
+
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                cells[i][j] = new JButton("");
+                int row = i;
+                int col = j;
+
+                cells[i][j].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (cells[row][col].getText().isEmpty() && currentCard != 0) {
+                            cells[row][col].setText(String.valueOf(currentCard));
+                            currentCard = 0;
+                            disableAllButtons();
+                        }
+                    }
+                });
+                cells[i][j].setEnabled(false);
+                gridPanel.add(cells[i][j]);
+            }
+        }
+        add(gridPanel, BorderLayout.CENTER);
+    }
+
+    private int drawCard() {
+        return deck.remove(deck.size() - 1);
+    }
+
+    private void enablePlayerMove() {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (cells[i][j].getText().isEmpty()) {
+                    cells[i][j].setEnabled(true);
+                }
+            }
+        }
+    }
+
+    private void computerMove() {
+        JOptionPane.showMessageDialog(null, "Ход компьютера!");
+
+        int bestRow = -1, bestCol = -1;
+        int maxScore = Integer.MIN_VALUE;
+
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (cells[i][j].getText().isEmpty()) {
+                    cells[i][j].setText(String.valueOf(currentCard));
+                    int score = calculateScore();
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestRow = i;
+                        bestCol = j;
+                    }
+                    cells[i][j].setText("");
+                }
+            }
+        }
+
+        if (bestRow != -1 && bestCol != -1) {
+            cells[bestRow][bestCol].setText(String.valueOf(currentCard));
+        }
+        currentCard = 0;
+    }
+
+    private void disableAllButtons() {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                cells[i][j].setEnabled(false);
+            }
+        }
+    }
+
+    private int calculateScore() {
+        int score = 0;
+        for (int i = 0; i < GRID_SIZE; i++) {
+            int rowSum = 0;
+            int colSum = 0;
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (!cells[i][j].getText().isEmpty()) {
+                    rowSum += Integer.parseInt(cells[i][j].getText());
+                }
+                if (!cells[j][i].getText().isEmpty()) {
+                    colSum += Integer.parseInt(cells[j][i].getText());
+                }
+            }
+            score += rowSum + colSum;
+        }
+        return score;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MatematikoGameGUI game = new MatematikoGameGUI();
+            game.setVisible(true);
+        });
+    }
+}
