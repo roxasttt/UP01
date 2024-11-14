@@ -1,0 +1,76 @@
+import javax.swing.*;
+import java.awt.*;
+
+// Абстрактный класс TFish с виртуальным методом Draw
+abstract class TFish {
+    protected String name;
+
+    public TFish(String name) {
+        this.name = name;
+    }
+
+    public abstract void Draw(Graphics g);
+}
+
+// Класс TPike, наследник TFish, отображающийся как зелёная стрелка
+class TPike extends TFish {
+    public TPike(String name) {
+        super(name);
+    }
+
+    @Override
+    public void Draw(Graphics g) {
+        g.setColor(Color.GREEN);
+        int[] xPoints = {50, 100, 50, 70, 50};
+        int[] yPoints = {100, 120, 140, 120, 100};
+        g.fillPolygon(xPoints, yPoints, 5);
+    }
+}
+
+// Класс TKagr, наследник TFish, отображающийся как красный треугольник
+class TKagr extends TFish {
+    public TKagr(String name) {
+        super(name);
+    }
+
+    @Override
+    public void Draw(Graphics g) {
+        g.setColor(Color.RED);
+        int[] xPoints = {200, 250, 225};
+        int[] yPoints = {100, 100, 150};
+        g.fillPolygon(xPoints, yPoints, 3);
+    }
+}
+
+// Класс для отображения графического окна
+class FishFrame extends JFrame {
+    private TFish pike;
+    private TFish kagr;
+
+    public FishFrame() {
+        setTitle("Fish Display");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        pike = new TPike("Щука");
+        kagr = new TKagr("Карп");
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        pike.Draw(g);
+        kagr.Draw(g);
+    }
+}
+
+// Главный класс для запуска программы
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            FishFrame frame = new FishFrame();
+            frame.setVisible(true);
+        });
+    }
+}
