@@ -1,0 +1,167 @@
+import java.io.*;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+// Класс Час
+class Hour {
+    private int hour;
+
+    public Hour(int hour) {
+        if (hour < 0 || hour > 23) {
+            throw new IllegalArgumentException("Час должен быть в диапазоне от 0 до 23.");
+        }
+        this.hour = hour;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(int hour) {
+        if (hour < 0 || hour > 23) {
+            throw new IllegalArgumentException("Час должен быть в диапазоне от 0 до 23.");
+        }
+        this.hour = hour;
+    }
+}
+
+// Класс Минута
+class Minute {
+    private int minute;
+
+    public Minute(int minute) {
+        if (minute < 0 || minute > 59) {
+            throw new IllegalArgumentException("Минута должна быть в диапазоне от 0 до 59.");
+        }
+        this.minute = minute;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        if (minute < 0 || minute > 59) {
+            throw new IllegalArgumentException("Минута должна быть в диапазоне от 0 до 59.");
+        }
+        this.minute = minute;
+    }
+}
+
+// Класс Сутки
+class Day {
+    private Hour hour;
+    private Minute minute;
+
+    public Day(int hour, int minute) {
+        this.hour = new Hour(hour);
+        this.minute = new Minute(minute);
+    }
+
+    // Метод для вывода текущего времени
+    public void showCurrentTime() {
+        System.out.printf("Текущее время: %02d:%02d%n", hour.getHour(), minute.getMinute());
+    }
+
+    // Метод для определения времени суток (утро, день, вечер, ночь)
+    public void determineTimeOfDay() {
+        int currentHour = hour.getHour();
+
+        if (currentHour >= 6 && currentHour < 12) {
+            System.out.println("Сейчас утро.");
+        } else if (currentHour >= 12 && currentHour < 18) {
+            System.out.println("Сейчас день.");
+        } else if (currentHour >= 18 && currentHour < 22) {
+            System.out.println("Сейчас вечер.");
+        } else {
+            System.out.println("Сейчас ночь.");
+        }
+    }
+
+    // Метод для изменения времени
+    public void setTime(int hour, int minute) {
+        this.hour.setHour(hour);
+        this.minute.setMinute(minute);
+    }
+}
+
+public class DayTime {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            // Ввод времени с клавиатуры с контролем исключений
+            System.out.print("Введите часы (0-23): ");
+            int hour = getIntInput(scanner);
+
+            System.out.print("Введите минуты (0-59): ");
+            int minute = getIntInput(scanner);
+
+            // Создаем объект Сутки с введенным временем
+            Day day = new Day(hour, minute);
+
+            // Выводим текущее время
+            day.showCurrentTime();
+
+            // Определяем текущее время суток
+            day.determineTimeOfDay();
+
+            // Возможность изменения времени и повторного вывода
+            System.out.print("\nХотите изменить время? (да/нет): ");
+            String response = scanner.next();
+            
+            if (response.equalsIgnoreCase("да")) {
+                System.out.print("Введите новые часы (0-23): ");
+                hour = getIntInput(scanner);
+
+                System.out.print("Введите новые минуты (0-59): ");
+                minute = getIntInput(scanner);
+
+                day.setTime(hour, minute);
+                day.showCurrentTime();
+                day.determineTimeOfDay();
+            }
+
+            // Пример работы с файлом (чтение/запись)
+            System.out.print("\nХотите сохранить текущее время в файл? (да/нет): ");
+            response = scanner.next();
+
+            if (response.equalsIgnoreCase("да")) {
+                saveTimeToFile(day);
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("Ошибка: некорректный ввод данных. Введите целое число.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (OutOfMemoryError e) {
+            System.out.println("Ошибка: недостаточно памяти для выполнения операции.");
+        } catch (IOException e) {
+            System.out.println("Ошибка: проблема с файлом. " + e.getMessage());
+        } finally {
+            scanner.close();
+        }
+    }
+
+    // Метод для безопасного ввода целого числа
+    private static int getIntInput(Scanner scanner) {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Ошибка: пожалуйста, введите корректное целое число.");
+                scanner.next(); // Очищаем некорректный ввод
+            }
+        }
+    }
+
+    // Метод для сохранения времени в файл
+    private static void saveTimeToFile(Day day) throws IOException {
+        try (FileWriter writer = new FileWriter("current_time.txt")) {
+            writer.write(String.format("Текущее время: %02d:%02d%n", day.hour.getHour(), day.minute.getMinute()));
+            System.out.println("Время успешно сохранено в файл.");
+        } catch (IOException e) {
+            throw new IOException("Ошибка при записи в файл.", e);
+        }
+    }
+}
