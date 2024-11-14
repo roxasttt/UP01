@@ -1,0 +1,50 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class CustomDrawing extends JPanel {
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Прямоугольник - земля/основание (черный и больше по высоте)
+        g.setColor(Color.BLACK);
+        g.fillRect(100, 250, 400, 150); // Увеличена высота
+
+        // Горы (треугольники)
+        g.setColor(Color.GRAY);
+        int[] xPoints1 = {120, 200, 280};
+        int[] yPoints1 = {250, 150, 250};
+        g.fillPolygon(xPoints1, yPoints1, 3);
+
+        int[] xPoints2 = {320, 380, 440};
+        int[] yPoints2 = {250, 170, 250};
+        g.fillPolygon(xPoints2, yPoints2, 3);
+
+        // Корпус танка (нижняя часть)
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(180, 320, 240, 60); // Длинный прямоугольник
+
+        // Башня танка (верхняя часть)
+        g.fillRect(240, 280, 120, 60); // Верхняя часть танка
+
+        // Дуло танка (длинный узкий прямоугольник)
+        g.fillRect(360, 300, 100, 20); // Дуло
+
+        // Колеса танка (круги)
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillOval(200, 380, 60, 60);  // Первое колесо
+        g.fillOval(260, 380, 60, 60);  // Второе колесо
+        g.fillOval(320, 380, 60, 60);  // Третье колесо
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Tank Drawing with Black Base");
+        CustomDrawing panel = new CustomDrawing();
+
+        frame.setSize(600, 600); // Размер окна
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(panel);
+        frame.setVisible(true);
+    }
+}
