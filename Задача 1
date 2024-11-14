@@ -1,0 +1,46 @@
+public class LocalMinima {
+    public static void main(String[] args) {
+        int[][] matrix = {
+            {3, 4, 5},
+            {6, 1, 8},
+            {7, 2, 9}
+        };
+        int count = findLocalMinima(matrix);
+        System.out.println("Число локальных минимумов: " + count);
+    }
+    public static int findLocalMinima(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int localMinimaCount = 0;
+        // Проход по каждому элементу матрицы
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (isLocalMinimum(matrix, i, j, rows, cols)) {
+                    localMinimaCount++;
+                }
+            }
+        }
+        return localMinimaCount;
+    }
+    // Проверка, является ли элемент локальным минимумом
+    private static boolean isLocalMinimum(int[][] matrix, int i, int j, int rows, int cols) {
+        int current = matrix[i][j];
+        // Проверка всех 8 соседей
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                // Пропустить сам элемент
+                if (x == 0 && y == 0) {
+                    continue;
+                }
+                int neighborRow = i + x;
+                int neighborCol = j + y;
+                if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols) {
+                    if (matrix[neighborRow][neighborCol] <= current) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+}
