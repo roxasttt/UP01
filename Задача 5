@@ -1,0 +1,32 @@
+package test;
+
+import java.util.Scanner;
+
+public class SumOfDigitsInText {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ввод текста пользователем
+        System.out.print("Введите текст: ");
+        String text = scanner.nextLine();
+
+        int sum = 0;
+
+        // Проходим по каждому символу строки
+        for (int i = 0; i < text.length(); i++) {
+            char currentChar = text.charAt(i);
+
+            // Проверяем, является ли символ цифрой
+            if (Character.isDigit(currentChar)) {
+                // Преобразуем символ в числовое значение и добавляем к сумме
+                sum += Character.getNumericValue(currentChar);
+            }
+        }
+
+        // Вывод суммы цифр
+        System.out.println("Сумма всех цифр в тексте: " + sum);
+
+        scanner.close();
+    }
+}
+
